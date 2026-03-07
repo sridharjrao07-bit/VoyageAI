@@ -62,7 +62,9 @@ PERF_WARN_MS = 500   # warn if request exceeds this threshold
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load all data on startup and init db."""
-    data_loader.load_data()
+    # Run heavy data processing in a background thread 
+    # to avoid blocking Render's 60-second port health-check timeout
+    asyncio.create_task(asyncio.to_thread(data_loader.load_data))
     init_db()
     yield
 
