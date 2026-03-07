@@ -1,0 +1,18 @@
+Dest 1 (Safety Risk) Present: False (Should be False)
+Dest 2 (Good/Pro-Tip) Present: False
+Dest 3 (Spam) Present: False
+
+ID: 41 | Name: Scottish Highlands
+Reasoning: The Scottish Highlands match your preferences for nature, history, and scenic views, with an average cost of ₹108000. Community insights suggest that while the main transport lines can be crowded, the local guides are fantastic. Pro-Tip: Plan your visit during the off-season to avoid crowds and enjoy the scenic hiking trails.
+
+ID: 39 | Name: Tuscany
+Reasoning: Tuscany fits your preferences for scenic views, history, and culture, with an average cost of ₹180000. Community insights warn that food can be expensive, but the local guides are great. Pro-Tip: Explore the rolling hills and medieval hilltop towns by cycling or on a guided tour.
+
+ID: 35 | Name: Norwegian Fjords
+Reasoning: The Norwegian Fjords match your preferences for scenic nature and hiking, with an average cost of ₹270000. Community insights suggest that the fjords are best seen from a kayak or boat tour. Pro-Tip: Visit during the summer solstice for the best views and longest days.
+
+ID: 8 | Name: Amalfi Coast
+Reasoning: The Amalfi Coast fits your preferences for romance, scenic views, and luxury, with an average cost of ₹252000. Community insights warn that the main transport lines can be crowded, but the local guides are fantastic. Pro-Tip: Take a boat tour to explore the hidden coves and beaches along the coastline.
+
+ID: 40 | Name: Oludeniz
+Reasoning: Oludeniz matches your preferences for beach, adventure, and coastal views, with an average cost of ₹72000. Community insights suggest that the Blue Lagoon is a must-visit, and paragliding is a popular activity. Pro-Tip: Book your paragliding experience in advance to ensure availability.

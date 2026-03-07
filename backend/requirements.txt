@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pandas
+numpy
+scikit-learn
+scipy
+httpx
+python-dotenv
+pydantic
+pydantic-settings
+aiohttp
+sentence-transformers

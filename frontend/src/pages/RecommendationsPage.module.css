@@ -1,0 +1,488 @@
+.header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+}
+
+.headerActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.profileSummary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.budget {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-gold);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.coldStartBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--accent-3);
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+}
+
+/* Skeleton */
+.skCard {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-card);
+}
+
+.skImg {
+    height: 200px;
+    width: 100%;
+    border-radius: 0;
+}
+
+.skBody {
+    padding: 20px;
+}
+
+/* Card */
+.card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-hover);
+}
+
+.rankBadge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 3;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Image */
+.imgWrap {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card:hover .img {
+    transform: scale(1.06);
+}
+
+.imgOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(7, 11, 20, 0.9) 0%, transparent 60%);
+}
+
+.imgMeta {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.country {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.a11yBadge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: var(--accent-green);
+    padding: 5px;
+    border-radius: 6px;
+    font-size: 1rem;
+    display: flex;
+}
+
+/* Body */
+.body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.titleRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.name {
+    font-family: 'Lora', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.cost {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    white-space: nowrap;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.xaiToggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(138, 154, 91, 0.08);
+    border: 1px solid rgba(138, 154, 91, 0.2);
+    color: var(--accent-1);
+    font-size: 0.83rem;
+    font-weight: 600;
+    text-align: left;
+    transition: var(--transition);
+}
+
+.xaiToggle:hover {
+    background: rgba(138, 154, 91, 0.15);
+}
+
+.xaiOverlay {
+    position: absolute;
+    inset: 0;
+    /* Frosted glass effect */
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.xaiClose {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.xaiClose:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.xaiBody {
+    font-size: 0.88rem;
+    color: #fff;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* Feedback */
+.feedbackRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.feedbackLabel {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.voteBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.voteBtn:hover {
+    transform: scale(1.15);
+}
+
+.votedUp {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.votedDown {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: var(--accent-rose);
+    color: var(--accent-rose);
+}
+
+.scoreBar {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    margin-left: 4px;
+}
+
+.scoreFill {
+    height: 100%;
+    background: var(--gradient-accent);
+    border-radius: 2px;
+}
+
+.scoreLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+/* ── Feature 1: Heart / Bucket List button ── */
+.heartBtn {
+    position: absolute;
+    top: 14px;
+    right: 54px;
+    /* leave room for a11y badge */
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 4;
+}
+
+.heartBtn:hover {
+    transform: scale(1.2);
+    border-color: rgba(244, 63, 94, 0.6);
+}
+
+.heartActive {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: rgba(244, 63, 94, 0.6);
+    animation: heartPop 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes heartPop {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ── Feature 3: Weather Pivot amber banner ── */
+.pivotBanner {
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #f59e0b;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+/* ── Feature 5: Surprise Me badge on card ── */
+.surpriseBadge {
+    position: absolute;
+    top: 52px;
+    left: 14px;
+    z-index: 3;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.85), rgba(59, 130, 246, 0.85));
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+/* ── Feature 5: Surprise Mode full-width banner ── */
+.surpriseBanner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.12));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    animation: fadeInUp 0.3s ease;
+}
+
+.surpriseBanner>span {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.surpriseBanner strong {
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 4px;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.surpriseBanner p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.surpriseActive {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.35);
+}
+
+/* ── Feature 1: RL Bias banner ── */
+.rlBanner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 18px;
+    margin-bottom: 20px;
+    border-radius: var(--radius-pill);
+    background: rgba(244, 63, 94, 0.08);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.rlBanner strong {
+    color: var(--text-primary);
+}
+
+/* Header actions row — allow wrap on small screens */
+.headerActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.headerActions> :last-child,
+.headerActions> :nth-last-child(2) {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
