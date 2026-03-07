@@ -59,12 +59,18 @@ _perf_log: list[dict] = []
 PERF_WARN_MS = 500   # warn if request exceeds this threshold
 
 
+import threading
+
+def _delayed_load():
+    time.sleep(3)  # Let Uvicorn finish binding the port
+    data_loader.load_data()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load all data on startup and init db."""
-    # Run heavy data processing in a background thread 
-    # to avoid blocking Render's 60-second port health-check timeout
-    asyncio.create_task(asyncio.to_thread(data_loader.load_data))
+    # Spawn a delayed daemon thread so Uvicorn's main thread
+    # isn't starved by the GIL of the ML model loading.
+    threading.Thread(target=_delayed_load, daemon=True).start()
     init_db()
     yield
 
