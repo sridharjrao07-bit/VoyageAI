@@ -3,7 +3,7 @@ import axios from 'axios'
 // In production (Vercel), call Render backend directly to avoid Vercel's 30s rewrite timeout.
 // In local dev, Vite proxy handles /api -> localhost:8000.
 const BACKEND_URL = import.meta.env.PROD
-    ? 'https://voyageai-a7wx.onrender.com'
+    ? 'https://voyageai-production.up.railway.app'
     : '/api'
 
 const api = axios.create({

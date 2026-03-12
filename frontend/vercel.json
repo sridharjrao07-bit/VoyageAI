@@ -5,7 +5,7 @@
     "rewrites": [
         {
             "source": "/api/(.*)",
-            "destination": "https://voyageai-a7wx.onrender.com/$1"
+            "destination": "https://voyageai-production.up.railway.app/$1"
         },
         {
             "source": "/(.*)",
