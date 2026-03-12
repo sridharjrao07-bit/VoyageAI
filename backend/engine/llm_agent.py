@@ -13,9 +13,9 @@ v2 upgrades:
 """
 import os
 import json
-import httpx
-from dotenv import load_dotenv
-from typing import List, Dict, Any, Optional
+import httpx  # type: ignore[import]
+from dotenv import load_dotenv  # type: ignore[import]
+from typing import Any
 from collections import Counter
 
 load_dotenv()
@@ -87,9 +87,9 @@ def _build_system_prompt(surprise_mode: bool = False) -> str:
 
 
 def _build_preference_context(
-    user_tags: List[str],
-    liked_categories: List[str],
-    user_profile: Optional[Dict[str, Any]],
+    user_tags: list[str],
+    liked_categories: list[str],
+    user_profile: dict[str, Any] | None,
     surprise_mode: bool,
     include_flights: bool = False,
     currency_preference: str = "INR"
@@ -119,15 +119,15 @@ def _build_preference_context(
 
 
 async def generate_agent_recommendations(
-    user_tags: List[str],
-    history_ids: List[str],
-    raw_data: List[Dict[str, Any]],
-    user_profile: Optional[Dict[str, Any]] = None,
-    liked_categories: Optional[List[str]] = None,
+    user_tags: list[str],
+    history_ids: list[str],
+    raw_data: list[dict[str, Any]],
+    user_profile: dict[str, Any] | None = None,
+    liked_categories: list[str] | None = None,
     surprise_mode: bool = False,
     include_flights: bool = False,
     currency_preference: str = "INR"
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Pass the context to Grok to filter and reason about the top 5 picks.
 
