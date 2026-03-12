@@ -59,20 +59,12 @@ _perf_log: list[dict] = []
 PERF_WARN_MS = 500   # warn if request exceeds this threshold
 
 
-import threading
-
-def _delayed_load():
-    time.sleep(3)  # Let Uvicorn finish binding the port
-    data_loader.load_data()
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Load all data on startup and init db."""
-    # Spawn a delayed daemon thread so Uvicorn's main thread
-    # isn't starved by the GIL of the ML model loading.
-    threading.Thread(target=_delayed_load, daemon=True).start()
+    """Init db on startup. ML Data is lazy-loaded on first request to bypass Render boot timeouts."""
     init_db()
     yield
+
 
 
 app = FastAPI(
@@ -196,6 +188,17 @@ class ChatRequest(BaseModel):
 # Endpoints
 # ────────────────────────────────────────────
 
+_data_loaded = False
+
+def ensure_data_loaded():
+    global _data_loaded
+    if not _data_loaded:
+        print("[DataLoader] Lazy loading ML datasets on first request...")
+        data_loader.load_data()
+        _data_loaded = True
+
+
+
 @app.get("/health", tags=["System"])
 async def health():
     return {"status": "ok", "version": "1.0.0"}
@@ -210,6 +213,7 @@ async def get_destinations(
     include_photos: bool = False,
 ):
     """Return all destinations with optional filters."""
+    ensure_data_loaded()
     df = data_loader.get_destinations()
     if df is None:
         raise HTTPException(status_code=503, detail="Data not loaded")
@@ -235,6 +239,7 @@ async def get_destinations(
 @app.get("/destinations/{dest_id}", tags=["Destinations"])
 async def get_destination(dest_id: str, include_pois: bool = False):
     """Get a single destination by ID, optionally with nearby POIs from OpenTripMap."""
+    ensure_data_loaded()
     df = data_loader.get_destinations()
     if df is None:
         raise HTTPException(status_code=503, detail="Data not loaded")
@@ -266,6 +271,7 @@ async def recommend(req: RecommendRequest):
     Core Agentic recommendation endpoint.
     Uses SQLite memory and Grok LLM to ensure diversity and novelty.
     """
+    ensure_data_loaded()
     # Create or reuse session
     session_id = req.session_id or str(uuid.uuid4())
 
@@ -445,6 +451,7 @@ async def recommend(req: RecommendRequest):
 @app.get("/destinations/{dest_id}/outdoor", tags=["Destinations"])
 async def get_outdoor_features(dest_id: str, radius_m: int = 15000):
     """Fetch hiking trails, peaks, viewpoints & campsites near destination (Overpass API)."""
+    ensure_data_loaded()
     df = data_loader.get_destinations()
     if df is None:
         raise HTTPException(status_code=503, detail="Data not loaded")
@@ -463,6 +470,7 @@ async def get_outdoor_features(dest_id: str, radius_m: int = 15000):
 @app.get("/destinations/{dest_id}/weather", tags=["Destinations"])
 async def get_weather(dest_id: str):
     """Real-time weather + 5-day forecast for a destination (OpenWeatherMap)."""
+    ensure_data_loaded()
     df = data_loader.get_destinations()
     if df is None:
         raise HTTPException(status_code=503, detail="Data not loaded")
@@ -516,6 +524,7 @@ async def like_destination(req: LikeRequest):
     Persists in SQLite and feeds category data back to the LLM agent for RL bias.
     Supports toggle: calling again on an already-liked destination removes the like.
     """
+    ensure_data_loaded()
     df = data_loader.get_destinations()
     if df is None:
         raise HTTPException(status_code=503, detail="Data not loaded")
@@ -571,6 +580,7 @@ async def get_performance():
     Cached after first computation.
     """
     global _cached_metrics
+    ensure_data_loaded()
     if not _cached_metrics:
         _cached_metrics = compute_full_metrics()
     return _cached_metrics
@@ -579,6 +589,7 @@ async def get_performance():
 @app.get("/users/{user_id}", tags=["Users"])
 async def get_user(user_id: str):
     """Return user profile by ID."""
+    ensure_data_loaded()
     user = data_loader.get_user_by_id(user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -588,6 +599,7 @@ async def get_user(user_id: str):
 @app.get("/users", tags=["Users"])
 async def list_users():
     """List all user IDs and names."""
+    ensure_data_loaded()
     df = data_loader.get_users()
     if df is None:
         return []
