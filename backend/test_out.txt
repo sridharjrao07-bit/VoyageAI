@@ -1,0 +1,18 @@
+Dest 1 (Safety Risk) Present: False (Should be False)
+Dest 2 (Good/Pro-Tip) Present: False
+Dest 3 (Spam) Present: False
+
+ID: 99 | Name: Hampi
+Reasoning: Hampi matches your budget with an average cost of ₹22,500. Community Insights suggest that the ancient ruins are a must-visit, with users praising the historical significance and scenic landscape. Pro-Tip: Users recommend visiting the Virupaksha Temple at sunrise for a serene experience.
+
+ID: 42 | Name: Siem Reap
+Reasoning: Siem Reap fits your budget with an average cost of ₹45,000. Community Insights highlight the rich cultural heritage and historical temples, with users advising to explore the local markets for authentic souvenirs. Pro-Tip: Users suggest hiring a local guide to get a deeper understanding of the ancient temples and their history.
+
+ID: 90 | Name: Penang
+Reasoning: Penang matches your budget with an average cost of ₹45,000. Community Insights reveal that the city is a food lover's paradise, with users recommending the famous Char Kway Teow and Hokkien Mee. Pro-Tip: Users advise to explore the narrow streets of George Town to discover the vibrant street art and local cuisine.
+
+ID: 43 | Name: Palawan
+Reasoning: Palawan fits your budget with an average cost of ₹90,000. Community Insights suggest that the island is a tropical paradise, with users praising the stunning beaches and crystal-clear lagoons. Pro-Tip: Users recommend taking a boat tour to explore the hidden coves and snorkeling spots around the island.
+
+ID: 37 | Name: Phi Phi Islands
+Reasoning: Phi Phi Islands match your budget with an average cost of ₹72,000. Community Insights highlight the breathtaking scenery and vibrant nightlife, with users advising to visit Maya Bay at sunrise to avoid the crowds. Pro-Tip: Users suggest taking a snorkeling trip to explore the coral reefs and marine life around the islands.

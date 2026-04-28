@@ -1,0 +1,584 @@
+openapi: 3.1.0
+info:
+  title: Allora — Group Consensus Trip Recommendation API
+  version: 1.0.0
+  description: |
+    Fairness-aware group trip planning endpoints built on the **maximin criterion**:
+    rank destinations by the satisfaction of the *least-satisfied* group member,
+    not the group average.
+
+    ## Authentication
+    All `/groups` and `/admin` endpoints require a **Bearer JWT** in the
+    `Authorization` header.  Obtain a token via `POST /auth/login`.
+
+    ## Scoring Algorithm (v1.0.0)
+    Each destination is scored independently against each member's preference vector:
+    1. **Tag overlap score** — Jaccard-style overlap of member tags vs destination activity_tags (40 % weight)
+    2. **Budget fit score** — how well member budget range covers destination tier (35 % weight)
+    3. **Destination diversity bonus** — rewards broad destinations (25 % weight)
+    4. **Low-floor penalty** — if any member scores < 0.30, the fairness score is reduced by 20 %
+    5. **Fairness score** = 0.65 × maximin + 0.35 × average
+servers:
+  - url: http://localhost:8000
+    description: Local development
+  - url: https://srid0308-allora.hf.space
+    description: Production (Hugging Face Spaces)
+
+tags:
+  - name: Auth
+    description: User registration, login, and profile
+  - name: Groups
+    description: Trip group creation, membership, preferences, and recommendations
+  - name: Admin
+    description: Audit and replay endpoints (admin users only)
+
+paths:
+
+  # ── Auth ───────────────────────────────────────────────────────────────────
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new account
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              username: alice_traveler
+              email: alice@example.com
+              password: mysecret123
+              display_name: Alice Chen
+              avatar_emoji: "🌊"
+      responses:
+        '201':
+          description: Account created; JWT token returned immediately
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '409':
+          description: Username or email already taken
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login with username or email + password
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              username: alice_traveler
+              password: mysecret123
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current user profile
+      operationId: getMe
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /auth/users:
+    get:
+      tags: [Auth]
+      summary: Search users for group invite
+      operationId: searchUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          description: Username or display name search term
+          schema:
+            type: string
+            default: ""
+      responses:
+        '200':
+          description: List of matching users (no emails exposed)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSearchResult'
+
+  # ── Groups ─────────────────────────────────────────────────────────────────
+
+  /groups:
+    get:
+      tags: [Groups]
+      summary: List my trip groups
+      operationId: listGroups
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of user's groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupListResponse'
+
+    post:
+      tags: [Groups]
+      summary: Create a trip group
+      operationId: createGroup
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRequest'
+            example:
+              name: "Bali 2025 🌴"
+              invited_user_ids:
+                - "seed-user-002"
+                - "seed-user-003"
+      responses:
+        '201':
+          description: Group created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGroupResponse'
+
+  /groups/{group_id}:
+    get:
+      tags: [Groups]
+      summary: Get group details + member list
+      operationId: getGroup
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        '200':
+          description: Group details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDetail'
+        '403':
+          description: Not a member of this group
+        '404':
+          description: Group not found
+
+  /groups/{group_id}/members:
+    post:
+      tags: [Groups]
+      summary: Add a member (owner only)
+      operationId: addMember
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id]
+              properties:
+                user_id:
+                  type: string
+                  description: UUID of the user to add
+      responses:
+        '201':
+          description: Member added
+        '403':
+          description: Not the group owner
+        '404':
+          description: User not found
+        '409':
+          description: User already a member
+
+  /groups/{group_id}/members/{user_id}:
+    delete:
+      tags: [Groups]
+      summary: Remove a member (owner removes anyone; member can remove self)
+      operationId: removeMember
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Member removed
+        '403':
+          description: Insufficient permissions
+        '404':
+          description: Member not found
+
+  /groups/{group_id}/preferences:
+    put:
+      tags: [Groups]
+      summary: Submit / update my preferences (upsert)
+      operationId: submitPreferences
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferencesRequest'
+            example:
+              preference_tags: ["beach", "food", "budget"]
+              budget_min: 800
+              budget_max: 2500
+              trip_duration_days: 7
+              region_preference: Asia
+      responses:
+        '200':
+          description: Preferences saved
+        '400':
+          description: Validation error (e.g. budget_min > budget_max)
+        '403':
+          description: Not a member
+
+  /groups/{group_id}/preferences/status:
+    get:
+      tags: [Groups]
+      summary: Get preference submission status for all members
+      operationId: preferencesStatus
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        '200':
+          description: Submission status per member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferencesStatus'
+
+  /groups/{group_id}/recommend:
+    post:
+      tags: [Groups]
+      summary: Run fairness-aware group recommendation
+      operationId: runRecommendation
+      description: |
+        Scores the full destination catalog against every member's preferences.
+        Returns destinations ranked by **fairness score** (maximin criterion).
+        All members must have submitted preferences before this endpoint is callable.
+        Results are persisted for audit.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        '200':
+          description: Ranked destinations with per-member satisfaction scores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationResult'
+        '400':
+          description: Waiting for some members to submit preferences
+
+  /groups/{group_id}/recommendations/{run_id}:
+    get:
+      tags: [Groups]
+      summary: Fetch a past recommendation run
+      operationId: getRecommendationRun
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+        - name: run_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stored recommendation result
+        '404':
+          description: Run not found
+
+  # ── Admin ───────────────────────────────────────────────────────────────────
+
+  /admin/groups/{group_id}/recommendations/{run_id}/replay:
+    get:
+      tags: [Admin]
+      summary: Replay a recommendation run (side-by-side regression)
+      operationId: replayRun
+      description: |
+        Re-runs the scoring algorithm on the stored preferences snapshot.
+        Returns both the **original** result and the **new** result for regression
+        analysis when algorithm version changes are deployed.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+        - name: run_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Original and replayed results side-by-side
+        '403':
+          description: Admin access required
+        '404':
+          description: Run not found
+
+# ── Components ───────────────────────────────────────────────────────────────
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    groupId:
+      name: group_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: UUID of the trip group
+
+  schemas:
+
+    RegisterRequest:
+      type: object
+      required: [username, email, password, display_name]
+      properties:
+        username:    { type: string, minLength: 3, maxLength: 64 }
+        email:       { type: string, format: email }
+        password:    { type: string, minLength: 6 }
+        display_name: { type: string, minLength: 1, maxLength: 128 }
+        avatar_emoji: { type: string, default: "🧳" }
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string, description: "Username or email" }
+        password: { type: string }
+
+    AuthResponse:
+      type: object
+      properties:
+        access_token: { type: string }
+        token_type:   { type: string, example: bearer }
+        user:         { $ref: '#/components/schemas/UserProfile' }
+
+    UserProfile:
+      type: object
+      properties:
+        id:           { type: string }
+        username:     { type: string }
+        email:        { type: string }
+        display_name: { type: string }
+        avatar_emoji: { type: string }
+        created_at:   { type: string, format: date-time }
+
+    UserSearchResult:
+      type: object
+      properties:
+        id:           { type: string }
+        username:     { type: string }
+        display_name: { type: string }
+        avatar_emoji: { type: string }
+
+    CreateGroupRequest:
+      type: object
+      required: [name]
+      properties:
+        name:               { type: string, minLength: 1, maxLength: 256 }
+        invited_user_ids:   { type: array, items: { type: string }, default: [] }
+
+    CreateGroupResponse:
+      type: object
+      properties:
+        id:           { type: string }
+        name:         { type: string }
+        status:       { type: string }
+        created_by:   { type: string }
+        member_count: { type: integer }
+        message:      { type: string }
+
+    GroupListResponse:
+      type: object
+      properties:
+        total: { type: integer }
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              id:                     { type: string }
+              name:                   { type: string }
+              status:                 { type: string }
+              created_at:             { type: string, format: date-time }
+              member_count:           { type: integer }
+              my_role:                { type: string, enum: [owner, member] }
+              preferences_submitted:  { type: boolean }
+
+    GroupDetail:
+      type: object
+      properties:
+        id:          { type: string }
+        name:        { type: string }
+        status:      { type: string }
+        created_by:  { type: string }
+        created_at:  { type: string, format: date-time }
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMember'
+
+    GroupMember:
+      type: object
+      properties:
+        id:                     { type: string }
+        user_id:                { type: string }
+        display_name:           { type: string }
+        username:               { type: string }
+        avatar_emoji:           { type: string }
+        role:                   { type: string, enum: [owner, member] }
+        joined_at:              { type: string, format: date-time }
+        preferences_submitted:  { type: boolean }
+
+    PreferencesRequest:
+      type: object
+      required: [preference_tags, budget_min, budget_max, trip_duration_days]
+      properties:
+        preference_tags:
+          type: array
+          items: { type: string }
+          maxItems: 3
+          description: "Max 3 tags from: beach, luxury, adventure, culture, food, budget, remote, urban, relaxation"
+        budget_min:
+          type: integer
+          minimum: 300
+          maximum: 10000
+          description: Minimum trip budget in USD
+        budget_max:
+          type: integer
+          minimum: 300
+          maximum: 10000
+        trip_duration_days:
+          type: integer
+          minimum: 1
+          maximum: 60
+        region_preference:
+          type: string
+          nullable: true
+          description: "Optional: Asia, Europe, North America, etc."
+
+    PreferencesStatus:
+      type: object
+      properties:
+        group_id:        { type: string }
+        total_members:   { type: integer }
+        submitted_count: { type: integer }
+        pending_count:   { type: integer }
+        all_ready:       { type: boolean }
+        submitted:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:      { type: string }
+              display_name: { type: string }
+              avatar_emoji: { type: string }
+        pending:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:      { type: string }
+              display_name: { type: string }
+              avatar_emoji: { type: string }
+
+    ConflictItem:
+      type: object
+      properties:
+        type:            { type: string, example: budget_vs_luxury }
+        label:           { type: string, example: "Budget vs Luxury" }
+        members_a:       { type: array, items: { type: string } }
+        members_b:       { type: array, items: { type: string } }
+        resolution_note: { type: string }
+
+    DestinationResult:
+      type: object
+      properties:
+        destination_id:   { type: string }
+        name:             { type: string }
+        country:          { type: string }
+        fairness_score:   { type: number, format: float, description: "0–1, higher is better" }
+        maximin_score:    { type: number, format: float }
+        average_score:    { type: number, format: float }
+        rank:             { type: integer }
+        tags:             { type: string }
+        activity_tags:    { type: array, items: { type: string } }
+        budget_range:
+          type: object
+          properties:
+            min: { type: integer }
+            max: { type: integer }
+        member_scores:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:      { type: string }
+              display_name: { type: string }
+              score:        { type: number }
+              score_pct:    { type: number }
+              tier:         { type: string, enum: [green, amber, red] }
+
+    RecommendationResult:
+      type: object
+      properties:
+        run_id:             { type: string }
+        conflicts_detected:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConflictItem'
+        destinations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationResult'

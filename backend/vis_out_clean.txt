@@ -1,0 +1,21 @@
+Health: {'status': 'ok', 'version': '1.0.0'}
+
+Status: 200
+Visual Search matched 5 destinations:
+
+  [0.2935] Faroe Islands, Denmark
+           Remote Atlantic archipelago of emerald cliffs and roaring waterfalls in swirling mist....
+
+  [0.2909] Scottish Highlands, United Kingdom
+           Ancient lochs, rugged moorland, and medieval castles in Britain's last great wilderness....
+
+  [0.2814] Fjordland NP, New Zealand
+           New Zealand's most spectacular national park ù Milford Sound, Doubtful Sound, and Sutherland Falls....
+
+  [0.2802] Norwegian Fjords, Norway
+           UNESCO-listed fjords of staggering beauty ù steep cliffs, mirror-like waters, and remote mountain vi...
+
+  [0.2630] Inca Trail, Peru
+           The world's most iconic trek ù four days through cloud forest and Andean passes to Machu Picchu....
+
+

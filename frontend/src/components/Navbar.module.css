@@ -1,0 +1,213 @@
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    transition: all 0.3s ease;
+    padding: 0 24px;
+}
+
+.scrolled {
+    background: rgba(7, 11, 20, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-right: auto;
+}
+
+.logoIcon {
+    font-size: 1.5rem;
+    color: var(--accent-1);
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.logoTag {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding-left: 2px;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+
+.link:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.link.active {
+    color: var(--accent-1);
+    background: rgba(99, 102, 241, 0.12);
+}
+
+.burger {
+    display: none;
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    background: transparent;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+}
+
+.drawer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 24px 24px;
+    background: rgba(7, 11, 20, 0.97);
+    border-top: 1px solid var(--border);
+    animation: fadeInUp 0.2s ease;
+}
+
+.drawerLink {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+
+.drawerLink:hover,
+.drawerLink.active {
+    color: var(--accent-1);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+@media (max-width: 820px) {
+    .links {
+        display: none;
+    }
+
+    .burger {
+        display: flex;
+        margin-left: auto;
+    }
+
+    .nav>.inner>a.btn-primary {
+        display: none;
+    }
+
+    .authArea {
+        display: none;
+    }
+}
+
+/* ── Auth Area ────────────────────────────────── */
+.authArea {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.loginBtn {
+    padding: 8px 18px;
+    background: var(--gradient-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 3px 12px rgba(138, 154, 91, 0.35);
+    white-space: nowrap;
+}
+
+.loginBtn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 6px 20px rgba(138, 154, 91, 0.5);
+}
+
+.userMenu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.userAvatar {
+    font-size: 1.4rem;
+    cursor: default;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.logoutBtn {
+    padding: 7px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.logoutBtn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.drawerAuth {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+}
+
+.drawerAuth .loginBtn,
+.drawerAuth .logoutBtn {
+    width: 100%;
+    justify-content: center;
+}

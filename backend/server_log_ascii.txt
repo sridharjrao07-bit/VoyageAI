@@ -1,0 +1,19 @@
+python : INFO:     Started server process [23092]
+At line:1 char:1
++ python -m uvicorn main:app --port 8000 > server_log2.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO:     Started server process [23092]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+[Sanitizer] Report: {'total_destinations_before': 100, 'removed_placeholder_destinations': 0, 'removed_invalid_coords': 0, 'total_destinations_after': 100, 'total_ratings_before': 351, 'removed_stale_ratings': 0, 'total_ratings_after': 351, 'flagged_destination_names': []}
+[DataLoader] Loaded 100 destinations, 50 users, 351 ratings.
+[SemanticSearch] sentence-transformers not installed. Semantic search will be disabled. Run: pip install sentence-transformers
+[Agent] HTTPStatusError 400: {"code":"Client specified an invalid argument","error":"Incorrect API key provided: gs***eI. You can obtain an API key from https://console.x.ai."}
+[Perf] [SLOW] POST /recommend -> 200  3535.0ms
+INFO:     127.0.0.1:51063 - "POST /recommend HTTP/1.1" 200 OK
+[Agent] HTTPStatusError 400: {"code":"Client specified an invalid argument","error":"Incorrect API key provided: gs***eI. You can obtain an API key from https://console.x.ai."}
+[Perf] [SLOW] POST /recommend -> 200  3701.1ms
+INFO:     127.0.0.1:52872 - "POST /recommend HTTP/1.1" 200 OK
